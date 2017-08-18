@@ -38,6 +38,7 @@ struct arg {
 static const char *battery_perc(const char *bat);
 static const char *battery_power(const char *bat);
 static const char *battery_state(const char *bat);
+static const char *vpn_status(void);
 static const char *cpu_freq(void);
 static const char *cpu_perc(void);
 static const char *datetime(const char *fmt);
@@ -143,10 +144,10 @@ battery_state(const char *bat)
 		char *state;
 		char *symbol;
 	} map[] = {
-		{ "Charging",    "+" },
-		{ "Discharging", "-" },
-		{ "Full",        "=" },
-		{ "Unknown",     "/" },
+		{ "Charging",    "" },
+		{ "Discharging", "" },
+		{ "Full",        "" },
+		{ "Unknown",     "" },
 	};
 	size_t i;
 	char path[PATH_MAX], state[12];
@@ -162,6 +163,17 @@ battery_state(const char *bat)
 		}
 	}
 	return (i == LEN(map)) ? "?" : map[i].symbol;
+}
+
+static const char *
+vpn_status(void)
+{
+	if (0 == access("/proc/sys/net/ipv4/conf/tun0", 0)) {
+    		return bprintf("");
+	}	
+	else {
+    		return bprintf(" ");
+	}
 }
 
 static const char *
